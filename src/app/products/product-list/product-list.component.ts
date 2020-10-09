@@ -21,7 +21,7 @@ export class ProductListComponent implements OnInit {
   mostExpensiveProduct$: Observable<Product>;  
   productsNumber$: Observable<number>;
   productsTotalNumber$: Observable<number>;
-  errorMessage;  
+  errorMessage = "";  
 
   // Pagination
   pageSize = 5;
@@ -72,7 +72,15 @@ export class ProductListComponent implements OnInit {
 
     this.products$ = this
                       .productService
-                      .products$;
+                      .products$
+                      .pipe(
+                        catchError(
+                          error => {
+                            this.errorMessage = error;
+                            return EMPTY;
+                          }
+                        )
+                      );
 
     this.mostExpensiveProduct$ = this.productService.mostExpensiveProduct$;
 
@@ -87,7 +95,9 @@ export class ProductListComponent implements OnInit {
   }
 
   refresh() {
-    this.productService.initProducts();
-    this.router.navigateByUrl('/products'); // Self route navigation
+    this.productService.clearList();
+    this.start = 0;
+    this.end = this.pageSize;
+  //  this.router.navigateByUrl('/products'); // Self route navigation
   }  
 }

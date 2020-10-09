@@ -17,6 +17,10 @@
     &nbsp;
 </div>
 
+<div *ngIf="errorMessage" class="errorMessage">
+    {{ errorMessage }}
+</div>
+
 <ng-template #loading>
     <h2 class="loading">Loading products</h2>
 </ng-template>
