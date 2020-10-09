@@ -18,13 +18,24 @@ export class ProductListComponent implements OnInit {
   title: string = 'Products';
   selectedProduct: Product;
   products$: Observable<Product[]>;
-  errorMessage;
+  mostExpensiveProduct$: Observable<Product>;  
+  productsNumber$: Observable<number>;
+  productsTotalNumber$: Observable<number>;
+  errorMessage;  
 
   // Pagination
   pageSize = 5;
   start = 0;
   end = this.pageSize;
   currentPage = 1;
+  productsToLoad = this.pageSize * 2;
+
+  loadMore() {
+    let take: number = this.productsToLoad;
+    let skip: number = this.end;
+    
+    this.productService.initProducts(skip, take);
+  }
 
   previousPage() {
     this.start -= this.pageSize;
@@ -62,6 +73,17 @@ export class ProductListComponent implements OnInit {
     this.products$ = this
                       .productService
                       .products$;
+
+    this.mostExpensiveProduct$ = this.productService.mostExpensiveProduct$;
+
+    this.productsTotalNumber$ = this.productService.productsTotalNumber$;
+
+    this.productsNumber$ = this
+                            .products$
+                            .pipe(
+                              map(products => products.length),
+                              startWith(0)
+                            );
   }
 
   refresh() {
